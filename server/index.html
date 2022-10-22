@@ -1,0 +1,24 @@
+Find out more at <a href="https://workerbox.net">https://workerbox.net</a>.
+
+<script>
+  const worker = new Worker('./worker.js');
+  worker.addEventListener('message', (event) => {
+    const { messageNumber, origin, result } = event.data;
+
+    self.parent.postMessage({
+      messageNumber,
+      result
+    }, origin)
+  })
+
+  self.addEventListener('message', (event) => {
+    worker.postMessage({
+      messageNumber: event.data.messageNumber,
+      origin: event.origin,
+      code: event.data.code
+    });
+  })
+  setTimeout(() => worker.terminate(), 1000)
+
+  self.parent.postMessage({ ready: true }, document.referrer);
+</script>

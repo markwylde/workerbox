@@ -1,0 +1,28 @@
+{
+  "name": "workerbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild --bundle --outfile=index.min.js index.js",
+    "watch": "esbuild --watch --bundle --outfile=index.min.js index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sandbox",
+    "eval",
+    "execute",
+    "javascript",
+    "untrusted"
+  ],
+  "author": {
+    "email": "me@markwylde.com",
+    "name": "Mark Wylde",
+    "url": "https://github.com/markwylde"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "workerbox": "../",
+    "esbuild": "^0.15.12"
+  }
+}

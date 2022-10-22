@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkerBox Demo</title>
+  <script src="index.min.js" defer></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    textarea {
+      width: 100%;
+      display: block;
+      min-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>WorkerBox.net</h1>
+  <p>A secure sandbox for you to run end user JavaScript safely away from
+    your own application.
+  </p>
+  <ul>
+    <li>Code is run in it's own subdomain of workerbox.net</li>
+    <li>Code is run in a WebWorker</li>
+  </ul>
+
+  <h1>Demo</h1>
+  <p>Write any code you'd like evaluated safely in the box below.</p>
+  <p>It will be impossible for you to effect the DOM of this page.</p>
+<textarea id="codeInput">
+function add (a, b) {
+  return a + b;
+}
+add(1, 2);
+</textarea>
+  
+  <strong>Result:</strong>
+  <pre><code id="codeOutput">Running</code></pre>
+</body>
+</html>
