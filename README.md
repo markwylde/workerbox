@@ -8,12 +8,12 @@ The separate domain code is located in the [`./server`](./server) folder of this
 
 ### Install npmjs
 ```
-npm install --save workerbox
+npm install --save workerboxjs
 ```
 
 ## Usage
 ```javascript
-import createWorkerBox from 'workerbox';
+import createWorkerBox from 'workerboxjs';
 
 const run = await createWorkerBox('https://sandbox.workerbox.net/');
 

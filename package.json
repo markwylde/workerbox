@@ -1,5 +1,5 @@
 {
-  "name": "workerbox",
+  "name": "workerboxjs",
   "version": "1.0.0",
   "type": "module",
   "description": "A secure sandbox to execute untrusted user JavaScript, in a web browser, without any risk to your own domain/site/page.",
@@ -7,6 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "lib/index.js"
+  ],
   "keywords": [
     "sandbox",
     "eval",

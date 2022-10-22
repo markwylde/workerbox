@@ -1,4 +1,4 @@
-import createWorkerBox from 'workerbox';
+import createWorkerBox from 'workerboxjs';
 import debounce from './utils/debounce';
 
 const codeInput = document.querySelector('#codeInput');
