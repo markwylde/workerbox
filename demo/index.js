@@ -5,7 +5,7 @@ const codeInput = document.querySelector('#codeInput');
 const codeOutput = document.querySelector('#codeOutput');
 
 async function execute () {
-  const run = await createWorkerBox('https://sandbox.workerbox.net/');
+  const run = await createWorkerBox('https://workerbox.net/');
   const code = codeInput.value;
   const result = await run(code);
   codeOutput.innerHTML = result;
