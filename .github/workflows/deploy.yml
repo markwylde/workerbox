@@ -26,4 +26,5 @@ jobs:
 
       - name: Sync production
         run: |
+          npm install
           ./node_modules/@markwylde/ftp-deploy/index.js .github/workflows/deployConfig.js
