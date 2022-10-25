@@ -19,6 +19,14 @@ jobs:
         with:
           node-version: 19
 
+      - name: Install and Build
+        run: |
+          npm install
+          cd demo
+          npm install
+          npm run build
+          rm -rf node_modules
+
       - id: npmjsVersion
         name: Extract version from package.json
         run: |
@@ -26,7 +34,6 @@ jobs:
 
       - name: Sync production
         run: |
-          npm install
           ./node_modules/@markwylde/ftp-deploy/index.js .github/workflows/deployConfig.js
         env:
           TOP_FTP_HOSTNAME: ${{ secrets.top_ftp_server }}
