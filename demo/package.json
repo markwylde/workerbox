@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "workerboxjs": "../",
+    "workerboxjs": "file:../",
     "esbuild": "^0.15.12"
   }
 }
