@@ -35,4 +35,4 @@ jobs:
           username: ${{ secrets.sub_ftp_username }}
           password: ${{ secrets.sub_ftp_password }}
           local-dir: ./server/
-          server-dir: v${{ steps.npmjsVersion.outputs.npmjsVersion }}
+          server-dir: ./v${{ steps.npmjsVersion.outputs.npmjsVersion }}/
