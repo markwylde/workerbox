@@ -4,11 +4,17 @@ import debounce from './utils/debounce';
 const codeInput = document.querySelector('#codeInput');
 const codeOutput = document.querySelector('#codeOutput');
 
+const runPromise = createWorkerBox('https://workerbox.net/');
+
 async function execute () {
-  const run = await createWorkerBox('https://workerbox.net/');
+  const run = await runPromise;
   const code = codeInput.value;
-  const result = await run(code);
-  codeOutput.innerHTML = result;
+  try {
+    const result = await run(code);
+    codeOutput.innerHTML = result;
+  } catch (error) {
+    codeOutput.innerHTML = error;
+  }
 }
 execute();
 codeInput.addEventListener('input', debounce(execute, 150));

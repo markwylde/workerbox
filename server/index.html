@@ -3,11 +3,12 @@ Find out more at <a href="https://workerbox.net">https://workerbox.net</a>.
 <script>
   const worker = new Worker('./worker.js');
   worker.addEventListener('message', (event) => {
-    const { messageNumber, origin, result } = event.data;
+    const { messageNumber, origin, result, error } = event.data;
 
     self.parent.postMessage({
       messageNumber,
-      result
+      result,
+      error
     }, origin)
   })
 
@@ -18,7 +19,6 @@ Find out more at <a href="https://workerbox.net">https://workerbox.net</a>.
       code: event.data.code
     });
   })
-  setTimeout(() => worker.terminate(), 1000)
 
   self.parent.postMessage({ ready: true }, document.referrer);
 </script>
