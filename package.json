@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/markwylde/workerbox#readme",
   "devDependencies": {
-    "@markwylde/ftp-deploy": "^1.1.0"
+    "@markwylde/ftp-deploy": "^1.2.0"
   }
 }
