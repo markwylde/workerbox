@@ -1,3 +1,5 @@
+import info from '../../package.json' assert { type: 'json' };
+
 export default [{
   hostname: process.env.TOP_FTP_HOSTNAME,
   username: process.env.TOP_FTP_USERNAME,
@@ -9,5 +11,5 @@ export default [{
   username: process.env.SUB_FTP_USERNAME,
   password: process.env.SUB_FTP_PASSWORD,
   source: './server',
-  destination: ''
+  destination: 'v' + info.version
 }];
