@@ -25,7 +25,7 @@ jobs:
           server: ${{ secrets.top_ftp_server }}
           username: ${{ secrets.top_ftp_username }}
           password: ${{ secrets.top_ftp_password }}
-          local-dir: ./demo
+          local-dir: ./demo/
           dangerous-clean-slate: true
 
       - name: 📂 Sync subdomain files
@@ -34,5 +34,5 @@ jobs:
           server: ${{ secrets.sub_ftp_server }}
           username: ${{ secrets.sub_ftp_username }}
           password: ${{ secrets.sub_ftp_password }}
-          local-dir: ./server
+          local-dir: ./server/
           server-dir: v${{ steps.npmjsVersion.outputs.npmjsVersion }}
