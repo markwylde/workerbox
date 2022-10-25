@@ -1,0 +1,36 @@
+name: Deploy
+
+concurrency: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: npmjsVersion
+        name: Extract version from package.json
+        run: |
+          echo "npmjsVersion=`awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json`" >> $GITHUB_OUTPUT
+
+      - name: 📂 Sync top level files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        with:
+          server: ${{ secrets.top_ftp_server }}
+          username: ${{ secrets.top_ftp_username }}
+          password: ${{ secrets.top_ftp_password }}
+          dangerous-clean-slate: true
+
+      - name: 📂 Sync subdomain files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        with:
+          server: ${{ secrets.sub_ftp_server }}
+          username: ${{ secrets.sub_ftp_username }}
+          password: ${{ secrets.sub_ftp_password }}
+          server-dir: v${{ jobs.npmjsVersion.outputs.npmjsVersion }}
