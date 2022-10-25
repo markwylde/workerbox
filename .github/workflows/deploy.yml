@@ -25,13 +25,13 @@ jobs:
           echo "npmjsVersion=`awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json`" >> $GITHUB_OUTPUT
 
       - name: Sync production
-        env:
-          TOP_FTP_HOSTNAME: ${{ secrets.top_ftp_hostname }}
-          TOP_FTP_USERNAME: ${{ secrets.top_ftp_username }}
-          TOP_FTP_PASSWORD: ${{ secrets.top_ftp_password }}
-          SUB_FTP_HOSTNAME: ${{ secrets.sub_ftp_hostname }}
-          SUB_FTP_USERNAME: ${{ secrets.sub_ftp_username }}
-          SUB_FTP_PASSWORD: ${{ secrets.sub_ftp_password }}
         run: |
           npm install
           ./node_modules/@markwylde/ftp-deploy/index.js .github/workflows/deployConfig.js
+        env:
+          TOP_FTP_HOSTNAME: ${{ secrets.top_ftp_server }}
+          TOP_FTP_USERNAME: ${{ secrets.top_ftp_username }}
+          TOP_FTP_PASSWORD: ${{ secrets.top_ftp_password }}
+          SUB_FTP_HOSTNAME: ${{ secrets.sub_ftp_server }}
+          SUB_FTP_USERNAME: ${{ secrets.sub_ftp_username }}
+          SUB_FTP_PASSWORD: ${{ secrets.sub_ftp_password }}
