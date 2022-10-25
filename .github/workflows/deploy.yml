@@ -19,16 +19,6 @@ jobs:
         run: |
           echo "npmjsVersion=`awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json`" >> $GITHUB_OUTPUT
 
-      - name: 📂 Sync top level files
-        uses: SamKirkland/FTP-Deploy-Action@4.3.2
-        with:
-          protocol: ftps
-          server: ${{ secrets.top_ftp_server }}
-          username: ${{ secrets.top_ftp_username }}
-          password: ${{ secrets.top_ftp_password }}
-          local-dir: ./demo/
-          dangerous-clean-slate: true
-
       - name: 📂 Sync subdomain files
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
@@ -38,4 +28,14 @@ jobs:
           password: ${{ secrets.sub_ftp_password }}
           local-dir: ./server/
           server-dir: v${{ steps.npmjsVersion.outputs.npmjsVersion }}/
-          verbose: true
+          log-level: verbose
+
+      - name: 📂 Sync top level files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        with:
+          protocol: ftps
+          server: ${{ secrets.top_ftp_server }}
+          username: ${{ secrets.top_ftp_username }}
+          password: ${{ secrets.top_ftp_password }}
+          local-dir: ./demo/
+          dangerous-clean-slate: true
