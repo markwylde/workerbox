@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/markwylde/workerbox/issues"
   },
-  "homepage": "https://github.com/markwylde/workerbox#readme"
+  "homepage": "https://github.com/markwylde/workerbox#readme",
+  "devDependencies": {
+    "@markwylde/ftp-deploy": "^1.1.0"
+  }
 }
