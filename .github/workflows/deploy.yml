@@ -26,12 +26,12 @@ jobs:
 
       - name: Sync production
         env:
-          TOP_FTP_HOSTNAME: ${{ secrets.TOP_FTP_HOSTNAME }}
-          TOP_FTP_USERNAME: ${{ secrets.TOP_FTP_USERNAME }}
-          TOP_FTP_PASSWORD: ${{ secrets.TOP_FTP_PASSWORD }}
-          SUB_FTP_HOSTNAME: ${{ secrets.SUB_FTP_HOSTNAME }}
-          SUB_FTP_USERNAME: ${{ secrets.SUB_FTP_USERNAME }}
-          SUB_FTP_PASSWORD: ${{ secrets.SUB_FTP_PASSWORD }}
+          TOP_FTP_HOSTNAME: ${{ secrets.top_ftp_hostname }}
+          TOP_FTP_USERNAME: ${{ secrets.top_ftp_username }}
+          TOP_FTP_PASSWORD: ${{ secrets.top_ftp_password }}
+          SUB_FTP_HOSTNAME: ${{ secrets.sub_ftp_hostname }}
+          SUB_FTP_USERNAME: ${{ secrets.sub_ftp_username }}
+          SUB_FTP_PASSWORD: ${{ secrets.sub_ftp_password }}
         run: |
           npm install
           ./node_modules/@markwylde/ftp-deploy/index.js .github/workflows/deployConfig.js
