@@ -38,3 +38,4 @@ jobs:
           password: ${{ secrets.sub_ftp_password }}
           local-dir: ./server/
           server-dir: v${{ steps.npmjsVersion.outputs.npmjsVersion }}/
+          verbose: true
