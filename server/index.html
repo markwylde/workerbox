@@ -1,22 +1,15 @@
-Find out more at <a href="https://workerbox.net">https://workerbox.net</a>.
+<a href="https://workerbox.net">info?</a>.
 
 <script>
   const worker = new Worker('./worker.js');
   worker.addEventListener('message', (event) => {
-    const { messageNumber, origin, result, error } = event.data;
-
-    self.parent.postMessage({
-      messageNumber,
-      result,
-      error
-    }, origin)
+    self.parent.postMessage(event.data, event.data.origin)
   })
 
   self.addEventListener('message', (event) => {
     worker.postMessage({
-      messageNumber: event.data.messageNumber,
+      ...event.data,
       origin: event.origin,
-      code: event.data.code
     });
   })
 

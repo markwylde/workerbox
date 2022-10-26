@@ -1,10 +1,15 @@
 import createWorkerBox from 'workerboxjs';
-import debounce from './utils/debounce';
+import debounce from '../utils/debounce';
 
 const codeInput = document.querySelector('#codeInput');
 const codeOutput = document.querySelector('#codeOutput');
 
-const runPromise = createWorkerBox('https://workerbox.net/');
+const runPromise = process.env.NODE_ENV === 'development'
+  ? createWorkerBox('https://localhost:8002/', {
+    appendVersion: false,
+    randomiseSubdomain: false
+  })
+  : createWorkerBox('https://workerbox.net/');
 
 async function execute () {
   const run = await runPromise;

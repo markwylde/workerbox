@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild --bundle --outfile=index.min.js index.js",
-    "watch": "esbuild --watch --bundle --outfile=index.min.js index.js",
+    "start": "servatron --http2 --port 8000 & NODE_ENV=development npm run watch",
+    "build": "esbuild         --define:process.env.NODE_ENV=\\'production\\'  --bundle --outfile=index.min.js index.js",
+    "watch": "esbuild --watch --define:process.env.NODE_ENV=\\'development\\' --bundle --outfile=index.min.js index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -21,8 +22,11 @@
     "url": "https://github.com/markwylde"
   },
   "license": "MIT",
+  "dependencies": {
+    "workerboxjs": "file:../"
+  },
   "devDependencies": {
-    "workerboxjs": "file:../",
-    "esbuild": "^0.15.12"
+    "esbuild": "^0.15.12",
+    "servatron": "^2.4.2"
   }
 }

@@ -3,7 +3,7 @@ self.addEventListener('message', (workerboxEvent) => {
   workerboxEvent = undefined;
 
   try {
-    const result = eval(self.workerboxEvent.data.code);
+    const result = (0, eval)(self.workerboxEvent.data.code);
 
     self.postMessage({
       messageNumber: self.workerboxEvent.data.messageNumber,
