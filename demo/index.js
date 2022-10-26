@@ -4,11 +4,11 @@ import debounce from '../utils/debounce';
 const codeInput = document.querySelector('#codeInput');
 const codeOutput = document.querySelector('#codeOutput');
 
-// const runPromise = createWorkerBox('https://workerbox.net/');
-const runPromise = createWorkerBox('https://localhost:8002/', {
-  appendVersion: false,
-  randomiseSubdomain: false
-});
+const runPromise = createWorkerBox('https://workerbox.net/');
+// const runPromise = createWorkerBox('https://localhost:8002/', {
+//   appendVersion: false,
+//   randomiseSubdomain: false
+// });
 
 async function execute () {
   const run = await runPromise;
