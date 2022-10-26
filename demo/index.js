@@ -6,10 +6,9 @@ const codeOutput = document.querySelector('#codeOutput');
 
 const runPromise = process.env.NODE_ENV === 'development'
   ? createWorkerBox('https://localhost:8002/', {
-    appendVersion: false,
-    randomiseSubdomain: false
+    appendVersion: false
   })
-  : createWorkerBox('https://workerbox.net/');
+  : createWorkerBox('https://sandbox.workerbox.net/');
 
 async function execute () {
   const run = await runPromise;

@@ -15,7 +15,7 @@ npm install --save workerboxjs
 ```javascript
 import createWorkerBox from 'workerboxjs';
 
-const run = await createWorkerBox('https://workerbox.net/');
+const run = await createWorkerBox('https://sandbox.workerbox.net/');
 
 const result = await run(`
   function add (a, b) {
