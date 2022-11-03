@@ -15,6 +15,18 @@
       display: block;
       min-height: 200px;
     }
+    .editor {
+      width: 100%;
+      display: flex;
+      background-color: rgb(234, 234, 234);
+    }
+    .editor > *:first-child {
+      width: 60%;
+    }
+
+    .hide-gutter .cm-gutters {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -31,16 +43,69 @@
   </ul>
 
   <h1>Demo</h1>
-  <p>Write any code you'd like evaluated safely in the box below.</p>
-  <p>It will be impossible for you to effect the DOM of this page.</p>
-<textarea id="codeInput">
-function add (a, b) {
-  return a + b;
-}
-add(1, 2);
-</textarea>
-  
-  <strong>Result:</strong>
-  <pre><code id="codeOutput">Running</code></pre>
+  <p>The following is a demo of using WorkerBox to create a plugin
+    architecture for a web UI. There are messages on the right,
+    and an action bar that you can add commands to.
+  </p>
+
+  <p>It will be impossible for you to effect the DOM of this page, without
+    using the deliberately exposed methods on the scope.
+  </p>
+
+  <h2>Scope</h2>
+  <p>The scope is how you communicate with your users code.</p>
+
+  <p>For this demo, you can't edit the scope, as it's hard coded into the demo app.</p>
+
+  <div class="hide-gutter" id="scopePreview"></div>
+
+<div class="editor">
+  <div>
+    <h2>User Playground</h2>
+    <p>You can edit the code below and see the results on the right.</p>
+    <div id="codeInput"></div>
+  </div>
+
+  <div>
+    <h2>Result</h2>
+    <h3>Toolbar</h3>
+    <div id="toolbar"></div>
+    <h3>Messages</h3>
+    <ul id="messages">
+      <li>Message one</li>
+    </ul>
+
+    <h3>Return:</h3>
+    <pre><code id="codeOutput">Running</code></pre>
+  </div>
+</div>
+
+<h2>How does it work?</h2>
+<p>An iframe is inserted into the page from a completely separate domain.</p>
+
+<p>The iframe then creates a web worker, and handles posting messages between
+  the iframe, webworker and your own app.<p>
+
+<p>Because the only communication between the user code and the workerbox instead
+  is done through messaging, the argument inputs and outputs must all be JSON
+  serializable.</p>
+
+<h2>Caveats</h2>
+<h3>1. Storage</h3>
+<p>Web workers can't use cookies or localStorage, but even if they could they would be
+isolated to third party domain that is running the code.</p>
+
+<p>However, there are some ways to store data. For example, indexDB.</p>
+
+<p>While your unsafe user code can not access the indexDB of your own site, it can use
+  the instance on the server's site.</p>
+
+<p>But remember, anyone can run untrusted user code on the workerbox site. So if your users
+  store data on the workerbox domain, technically anyone can view that data.</p>
+
+<p>Therefore, <strong>you should advise your users not to store any data using the web workers API</strong>.</p>
+
+<p>Of course, you could provide an abstraction on the `scope` that would safely allow
+  you to store data on your own domain.</p>
 </body>
 </html>

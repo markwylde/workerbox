@@ -17,12 +17,18 @@ import createWorkerBox from 'workerboxjs';
 
 const run = await createWorkerBox('https://sandbox.workerbox.net/');
 
-const result = await run(`
-  function add (a, b) {
-      return a + b;
-  }
-  add(1, 2);
-`);
+const scope = {
+  name: 'Mark',
+  getMessage: () => 'Have a great day!'
+};
 
-// result === 3
+const result = await run(`
+  async function sayHello (who) {
+    return 'Hello ' + who + '. ' + await getMessage();
+  }
+
+  return sayHello(name);
+`, scope);
+
+// result === 'Hello Mark. Have a great day!'
 ```
