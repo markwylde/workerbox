@@ -10,7 +10,7 @@ const scope = {
   name: 'Mark',
 
   getFullName: (first, last) => \`\${first} \${last}\`,
-  
+
   clearToolbar: () => {
     toolbar.innerHTML = '';
   },
