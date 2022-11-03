@@ -113,6 +113,9 @@ async function execute () {
   }
 }
 execute();
-document
-  .querySelector('#codeInput')
-  .addEventListener('input', debounce(execute, 150));
+const executeDebounce = debounce(execute, 500);
+codeInput.addEventListener('input', executeDebounce);
+codeInput.addEventListener('change', executeDebounce);
+codeInput.addEventListener('keypress', executeDebounce);
+codeInput.addEventListener('keyup', executeDebounce);
+codeInput.addEventListener('paste', executeDebounce);
