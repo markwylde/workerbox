@@ -41,7 +41,7 @@ The iframe then creates a web worker, and handles posting messages between the i
 Because the only communication between the user code and the workerbox instead is done through messaging, the argument inputs and outputs must all be JSON serializable.
 
 ## Caveats
-1. Storage
+### Storage
 Web workers can't use cookies or localStorage, but even if they could they would be isolated to third party domain that is running the code.
 
 However, there are some ways to store data. For example, indexDB.
