@@ -22,11 +22,13 @@ function parseArgs (args) {
   for (const arg of args) {
     if (arg[0] === 'callback') {
       newArgs.push((...rawArgs) => {
-        const args = prepareArgs(rawArgs);
-        self.postMessage({
-          callbackKey: arg[1],
-          callbackArgs: args
-        }, '*');
+        return new Promise(resolve => {
+          const args = prepareArgs([...rawArgs, resolve]);
+          self.postMessage({
+            callbackKey: arg[1],
+            callbackArgs: args
+          }, '*');
+        });
       });
     } else if (arg[0] === 'object') {
       newArgs.push(parseArgs(arg[1]));
@@ -39,7 +41,9 @@ function parseArgs (args) {
 
 self.addEventListener('message', async (workerboxEvent) => {
   if (workerboxEvent.data.callbackKey) {
-    callbacks[workerboxEvent.data.callbackKey](...parseArgs(workerboxEvent.data.callbackArgs));
+    const result = await callbacks[workerboxEvent.data.callbackKey](...parseArgs(workerboxEvent.data.callbackArgs.slice(0, -1)));
+    const [resolve] = workerboxEvent.data.callbackArgs.slice(-1);
+    resolve && resolve(result);
     return;
   }
 
@@ -49,12 +53,14 @@ self.addEventListener('message', async (workerboxEvent) => {
       for (const key in scope) {
         if (scope[key][0] === 'function') {
           newScope[key] = (...rawArgs) => {
-            const args = prepareArgs(rawArgs);
-            self.postMessage({
-              messageNumber: workerboxEvent.data.messageNumber,
-              functionKey: scope[key][1],
-              functionArgs: args,
-              origin: workerboxEvent.data.origin
+            return new Promise(resolve => {
+              const args = prepareArgs([...rawArgs, resolve]);
+              self.postMessage({
+                messageNumber: workerboxEvent.data.messageNumber,
+                functionKey: scope[key][1],
+                functionArgs: args,
+                origin: workerboxEvent.data.origin
+              });
             });
           };
         } else if (scope[key][0] === 'object') {

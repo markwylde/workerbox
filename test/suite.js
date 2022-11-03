@@ -102,14 +102,17 @@ test('function on scope can return value', async (t) => {
 
   const run = await createWorkerBox(serverUrl, { appendVersion: false });
   const scope = {
-    test: () => 200
+    test: () => {
+      console.log('2:test');
+      return 200;
+    }
   };
 
   const result = await run(`
     return test()
   `, scope);
 
-  t.ok(result === '200', `${result} should equal 'yes'`);
+  t.equal(result, 200);
 });
 
 run().then(stats => {
