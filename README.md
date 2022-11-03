@@ -32,3 +32,24 @@ const result = await run(`
 
 // result === 'Hello Mark. Have a great day!'
 ```
+
+## How does it work?
+An iframe is inserted into the page from a completely separate domain.
+
+The iframe then creates a web worker, and handles posting messages between the iframe, webworker and your own app.
+
+Because the only communication between the user code and the workerbox instead is done through messaging, the argument inputs and outputs must all be JSON serializable.
+
+## Caveats
+1. Storage
+Web workers can't use cookies or localStorage, but even if they could they would be isolated to third party domain that is running the code.
+
+However, there are some ways to store data. For example, indexDB.
+
+While your unsafe user code can not access the indexDB of your own site, it can use the instance on the server's site.
+
+But remember, anyone can run untrusted user code on the workerbox site. So if your users store data on the workerbox domain, technically anyone can view that data.
+
+Therefore, you should advise your users not to store any data using the web workers API.
+
+Of course, you could provide an abstraction on the `scope` that would safely allow you to store data on your own domain.
