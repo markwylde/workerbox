@@ -97,20 +97,20 @@ test('returns a promise', async (t) => {
   t.ok(result === 'hi', `${result} should equal 'hi'`);
 });
 
-// test('function on scope can return value', async (t) => {
-//   t.plan(1);
+test('function on scope can return value', async (t) => {
+  t.plan(1);
 
-//   const run = await createWorkerBox(serverUrl, { appendVersion: false });
-//   const scope = {
-//     test: () => 200
-//   };
+  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const scope = {
+    test: () => 200
+  };
 
-//   const result = await run(`
-//     return test()
-//   `, scope);
+  const result = await run(`
+    return test()
+  `, scope);
 
-//   t.ok(result === '200', `${result} should equal 'yes'`);
-// });
+  t.ok(result === '200', `${result} should equal 'yes'`);
+});
 
 run().then(stats => {
   console.log('$$TEST_BROWSER_CLOSE$$:' + JSON.stringify(stats));
