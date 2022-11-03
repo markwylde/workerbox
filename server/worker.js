@@ -41,9 +41,7 @@ function parseArgs (args) {
 
 self.addEventListener('message', async (workerboxEvent) => {
   if (workerboxEvent.data.callbackKey) {
-    const result = await callbacks[workerboxEvent.data.callbackKey](...parseArgs(workerboxEvent.data.callbackArgs.slice(0, -1)));
-    const [resolve] = workerboxEvent.data.callbackArgs.slice(-1);
-    resolve && resolve(result);
+    callbacks[workerboxEvent.data.callbackKey](...parseArgs(workerboxEvent.data.callbackArgs));
     return;
   }
 

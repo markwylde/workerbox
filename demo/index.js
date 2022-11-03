@@ -49,7 +49,9 @@ addToolbarButton('Add Message', (timesCalled) => {
   addMessage(\`\${name}: \${time}\`);
 });
 
-console.log(getFullName('Mark', 'Wylde'));
+// Note all functions are converted to promises
+const fullName = await getFullName('Mark', 'Wylde');
+console.log(fullName);
 
 // You can define new functions
 function add (a, b) {
