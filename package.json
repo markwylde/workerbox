@@ -1,6 +1,6 @@
 {
   "name": "workerboxjs",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "type": "module",
   "description": "A secure sandbox to execute untrusted user JavaScript, in a web browser, without any risk to your own domain/site/page.",
   "main": "lib/index.js",
@@ -34,8 +34,17 @@
   "homepage": "https://github.com/markwylde/workerbox#readme",
   "devDependencies": {
     "@markwylde/ftp-deploy": "^1.2.0",
+    "basictap": "^3.4.3",
     "chokidar": "^3.5.3",
+    "debounce": "^1.2.1",
     "esbuild": "^0.15.12",
-    "minify": "^9.1.0"
+    "just-tap": "^1.5.1",
+    "minify": "^9.1.0",
+    "process": "^0.11.10",
+    "puppeteer": "^19.2.0",
+    "servatron": "^2.4.2"
+  },
+  "dependencies": {
+    "promise-deferred": "^2.0.3"
   }
 }

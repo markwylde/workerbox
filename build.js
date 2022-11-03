@@ -9,8 +9,8 @@ const minifyOptions = {
     ecma: '2020',
     mangle: {
       eval: true,
-      toplevel: true,
-    },
+      toplevel: true
+    }
   }
 };
 
@@ -19,7 +19,7 @@ async function build () {
   await fs.promises.rm('server/dist', { recursive: true, force: true });
   await fs.promises.mkdir('server/dist');
 
-  const minifiedHtml = await minify('server/index.html', minifyOptions)
+  const minifiedHtml = await minify('server/index.html', minifyOptions);
   fs.promises.writeFile('./server/dist/index.html', minifiedHtml);
 
   await esbuild.build({
@@ -28,10 +28,9 @@ async function build () {
     outfile: './server/dist/worker.js'
   }).then(console.log);
 
-  const minifiedWorker = await minify('server/dist/worker.js', minifyOptions)
+  const minifiedWorker = await minify('server/dist/worker.js', minifyOptions);
   fs.promises.writeFile('./server/dist/worker.js', minifiedWorker);
 }
-
 
 if (process.argv[2] === '--watch') {
   const debouncedBuild = debounce(build, 300);
@@ -39,9 +38,9 @@ if (process.argv[2] === '--watch') {
     ['./utils/*', './lib/*', './server'], {
       ignored: ['**/dist']
     }).on('all', (why, what) => {
-      console.log(new Date(), why, what);
-      debouncedBuild()
-    }
+    console.log(new Date(), why, what);
+    debouncedBuild();
+  }
   );
 } else {
   build();
