@@ -27,7 +27,7 @@ function parseArgs (args) {
           self.postMessage({
             callbackKey: arg[1],
             callbackArgs: args
-          }, '*');
+          });
         });
       });
     } else if (arg[0] === 'object') {
@@ -41,7 +41,13 @@ function parseArgs (args) {
 
 self.addEventListener('message', async (workerboxEvent) => {
   if (workerboxEvent.data.callbackKey) {
-    callbacks[workerboxEvent.data.callbackKey](...parseArgs(workerboxEvent.data.callbackArgs));
+    const parsedArgs = parseArgs(workerboxEvent.data.callbackArgs);
+    const [returnCallback] = workerboxEvent.data.callbackArgs.slice(-1);
+    const result = await callbacks[workerboxEvent.data.callbackKey]?.(...parsedArgs);
+    self.postMessage({
+      callbackKey: returnCallback[1],
+      callbackArgs: [result]
+    });
     return;
   }
 
