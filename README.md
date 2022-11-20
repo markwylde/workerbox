@@ -31,6 +31,8 @@ const result = await run(`
 `, scope);
 
 // result === 'Hello Mark. Have a great day!'
+
+run.destroy() // Destroys the worker box, terminating any running workers
 ```
 
 ## How does it work?
