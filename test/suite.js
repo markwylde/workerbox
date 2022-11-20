@@ -103,7 +103,6 @@ test('function on scope can return value', async (t) => {
   const run = await createWorkerBox(serverUrl, { appendVersion: false });
   const scope = {
     test: () => {
-      console.log('2:test');
       return 200;
     }
   };
@@ -113,6 +112,29 @@ test('function on scope can return value', async (t) => {
   `, scope);
 
   t.equal(result, 200);
+});
+
+test('callback as a function can return a value', async (t) => {
+  t.plan(1);
+
+  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+
+  let storedCallback;
+  const scope = {
+    setCallback: function setCB (fn) {
+      storedCallback = fn;
+    }
+  };
+
+  await run(`
+    setCallback(function myCB (){
+      return 'worked';
+    });
+  `, scope);
+
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  t.equal(await storedCallback(), 'worked');
 });
 
 run().then(stats => {

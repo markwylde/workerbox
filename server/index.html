@@ -3,7 +3,7 @@
 <script>
   const worker = new Worker('./worker.js');
   worker.addEventListener('message', (event) => {
-    self.parent.postMessage(event.data, event.data.origin)
+    self.parent.postMessage(event.data, document.referrer)
   })
 
   self.addEventListener('message', (event) => {
