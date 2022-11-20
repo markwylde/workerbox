@@ -7,8 +7,8 @@ declare type WorkerBoxFn = (code: string, scope?: Scope) => Promise<any>;
 declare type WorkerBoxMethods = {
   destroy: () => void;
 };
-declare type WorkerBox = WorkerBoxFn & WorkerBoxMethods;
-declare function createWorkerBox(
+export declare type WorkerBox = WorkerBoxFn & WorkerBoxMethods;
+export declare function createWorkerBox(
   scriptUrl: string,
   options?: WorkerBoxOptions
 ): Promise<WorkerBox>;
