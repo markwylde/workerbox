@@ -3,9 +3,8 @@ name: Deploy
 concurrency: deploy
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [created]
 
 jobs:
   deploy:
