@@ -12,6 +12,61 @@ test('simple evaluation', async (t) => {
   t.ok(result === 2, `${result} should equal 2`);
 });
 
+test('consecutive runs work', async (t) => {
+  t.plan(2);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const result1 = await run('return 1');
+  const result2 = await run('return 2');
+
+  t.equal(result1, 1, `${result1} should equal 1`);
+  t.equal(result2, 2, `${result2} should equal 2`);
+});
+
+test('same workerbox instance should share globalThis', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  await run('globalThis.a = 1');
+  const result = await run('return globalThis.a');
+
+  t.equal(result, 1);
+});
+
+test('same workerbox instance should share self', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  await run('self.a = 1');
+  const result = await run('return self.a');
+
+  t.equal(result, 1);
+});
+
+test('two workerbox instances do not share globalThis', async (t) => {
+  t.plan(2);
+
+  const { run: run1 } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run: run2 } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const result1 = await run1('globalThis.a = 1; return globalThis.a;');
+  const result2 = await run2('return globalThis.a');
+
+  t.equal(result1, 1);
+  t.equal(result2, null);
+});
+
+test('two workerbox instances do not share self', async (t) => {
+  t.plan(2);
+
+  const { run: run1 } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run: run2 } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const result1 = await run1('self.a = 1; return self.a;');
+  const result2 = await run2('return self.a');
+
+  t.equal(result1, 1);
+  t.equal(result2, null);
+});
+
 test('destroy works', async (t) => {
   t.plan(1);
 

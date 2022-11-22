@@ -15,6 +15,7 @@ npm install --save workerboxjs
 ```javascript
 import createWorkerBox from 'workerboxjs';
 
+// Note each `workerbox` instance has it's own sandbox
 const { run, destroy } = await createWorkerBox('https://sandbox.workerbox.net/');
 
 const scope = {
@@ -22,7 +23,15 @@ const scope = {
   getMessage: () => 'Have a great day!'
 };
 
+// You can save state between running code
+// But this will not save between different workerbox instances.
+await run(`
+  globalThis.sharedVariable = 123
+`);
+
 const result = await run(`
+  // globalThis.sharedVariable === 123;
+
   async function sayHello (who) {
     return 'Hello ' + who + '. ' + await getMessage();
   }
@@ -32,8 +41,37 @@ const result = await run(`
 
 // result === 'Hello Mark. Have a great day!'
 
-destroy() // Destroys the worker box, terminating any running workers
+// Destroys the workerbox, terminating the webworker
+destroy()
 ```
+
+## Development
+If you want to check this project out locally, you can do the following:
+
+### Run your own local server
+```
+git clone https://github.com/markwylde/workerbox.git
+cd workerbox
+npm install
+npm run start
+```
+
+Visit https://0.0.0.0:8002 in your browser and make sure to ignore the TLS security errors.
+Web workers will only work in secure contexts, so we need to do this locally.
+
+### Run the demo project
+```
+cd demo
+npm install
+npm run start
+```
+
+### Run the tests
+```
+npm run test
+```
+
+Visit https://0.0.0.0:8000 in your browser.
 
 ## How does it work?
 An iframe is inserted into the page from a completely separate domain.

@@ -1,5 +1,5 @@
 import createWorkerBox from 'workerboxjs';
-import debounce from '../utils/debounce';
+import debounce from 'debounce';
 import { EditorView, basicSetup } from 'codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { EditorState } from '@codemirror/state';
