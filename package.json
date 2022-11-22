@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node build.js --watch & servatron --http2 --port 8002 --directory server/dist",
     "build": "node build.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test"
   },
   "files": [
     "lib/index.js"

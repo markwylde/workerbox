@@ -10,7 +10,6 @@ const minifyOptions = {
   js: {
     ecma: '2020',
     mangle: {
-      eval: true,
       toplevel: true
     }
   }
@@ -27,15 +26,15 @@ async function build () {
     outfile: './server/dist/worker.js'
   }).then(console.log);
 
+  if (!isWatching) {
+    const minifiedHtml = await minify('server/dist/worker.js', minifyOptions);
+    await fs.promises.writeFile('./server/dist/worker.js', minifiedHtml);
+  }
+
   const jsData = await fs.promises.readFile('./server/dist/worker.js', 'utf8');
   const htmlData = await fs.promises.readFile('./server/index.html', 'utf8');
   await fs.promises.writeFile('./server/dist/index.html', htmlData.replace('{{WORKERSCRIPT}}', jsData));
   await fs.promises.rm('./server/dist/worker.js');
-
-  if (!isWatching) {
-    const minifiedHtml = await minify('server/index.html', minifyOptions);
-    fs.promises.writeFile('./server/dist/index.html', minifiedHtml);
-  }
 }
 
 if (isWatching) {
