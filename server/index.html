@@ -1,17 +1,15 @@
 <a href="https://workerbox.net">info?</a>.
 
 <script>
-  const worker = new Worker('./worker.js');
-  worker.addEventListener('message', (event) => {
-    self.parent.postMessage(event.data, document.referrer)
-  })
+  function workerScript () {
+{{WORKERSCRIPT}}
+  }
 
-  self.addEventListener('message', (event) => {
-    worker.postMessage({
-      ...event.data,
-      origin: event.origin,
-    });
-  })
+  self.addEventListener('message', async (event) => {
+    const code = workerScript.toString().split('\n').slice(1, -1).join('\n');
+    const blob = new Blob([code], {type: 'application/javascript'})
+    const worker = new Worker(URL.createObjectURL(blob))
 
-  self.parent.postMessage({ ready: true }, document.referrer);
+    worker.postMessage('OK', event.ports);
+  });
 </script>

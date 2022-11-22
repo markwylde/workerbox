@@ -77,7 +77,7 @@ const messages = document.querySelector('#messages');
 
 let timesCalled = 0;
 async function execute () {
-  const run = await runPromise;
+  const { run } = await runPromise;
   const code = editor.state.doc.toString();
   const scope = {
     name: 'Mark',

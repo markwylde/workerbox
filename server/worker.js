@@ -1,105 +1,50 @@
-const callbacks = {};
-let currentCallbackId = 0;
+import createCallbackStore from '../lib/createCallbackStore.js';
+import stringToScope from '../lib/stringToScope.js';
+import stringToArgs from '../lib/stringToArgs.js';
+import argsToString from '../lib/argsToString.js';
 
-function prepareArgs (args) {
-  const newArgs = [];
-  for (const arg of args) {
-    if (typeof arg === 'function') {
-      currentCallbackId = currentCallbackId + 1;
-      callbacks[currentCallbackId] = arg;
-      newArgs.push(['callback', currentCallbackId]);
-    } else if (typeof arg === 'object') {
-      newArgs.push(['object', prepareArgs(arg)]);
-    } else {
-      newArgs.push(['literal', arg]);
-    }
-  }
-  return newArgs;
+function scopedEval (context, expr) {
+  const evaluator = Function.apply(null, [
+    ...Object.keys(context),
+    `return (async function () {${expr} })()`
+  ]);
+  return evaluator.apply(null, [...Object.values(context)]);
 }
 
-function parseArgs (args) {
-  const newArgs = [];
-  for (const arg of args) {
-    if (arg[0] === 'callback') {
-      newArgs.push((...rawArgs) => {
-        return new Promise(resolve => {
-          const args = prepareArgs([...rawArgs, resolve]);
-          self.postMessage({
-            callbackKey: arg[1],
-            callbackArgs: args
-          });
-        });
-      });
-    } else if (arg[0] === 'object') {
-      newArgs.push(parseArgs(arg[1]));
-    } else {
-      newArgs.push(arg[1]);
-    }
-  }
-  return newArgs;
-}
+self.addEventListener('message', async (event) => {
+  const port = event.ports[0];
 
-self.addEventListener('message', async (workerboxEvent) => {
-  if (workerboxEvent.data.callbackKey) {
-    const parsedArgs = parseArgs(workerboxEvent.data.callbackArgs);
-    const [returnCallback] = workerboxEvent.data.callbackArgs.slice(-1);
-    const result = await callbacks[workerboxEvent.data.callbackKey]?.(...parsedArgs);
-    self.postMessage({
-      callbackKey: returnCallback[1],
-      callbackArgs: [result]
+  const callbacks = createCallbackStore();
+  const run = (id, args) =>
+    new Promise(resolve => {
+      port.postMessage(['callback', { id, args, resolve: callbacks.add(resolve) }]);
     });
-    return;
-  }
 
-  try {
-    function parseScope (scope) {
-      const newScope = {};
-      for (const key in scope) {
-        if (scope[key][0] === 'function') {
-          newScope[key] = (...rawArgs) => {
-            return new Promise(resolve => {
-              const args = prepareArgs([...rawArgs, resolve]);
-              self.postMessage({
-                messageNumber: workerboxEvent.data.messageNumber,
-                functionKey: scope[key][1],
-                functionArgs: args,
-                origin: workerboxEvent.data.origin
-              });
-            });
-          };
-        } else if (scope[key][0] === 'object') {
-          newScope[key] = parseScope(scope[key][1]);
-        } else {
-          newScope[key] = scope[key][1];
-        }
+  port.onmessage = async event => {
+    const [action, message] = event.data;
+    const { id, errorId, code, scope, args, resolve } = message;
+
+    if (action === 'execute') {
+      const parsedScope = stringToScope(scope, callbacks.add, run);
+
+      try {
+        const result = await scopedEval(parsedScope, code);
+
+        port.postMessage(['return', { id, args: argsToString([result]) }]);
+      } catch (error) {
+        port.postMessage(['error', { id: errorId, args: argsToString([error.message]) }]);
       }
-      return newScope;
     }
 
-    function execute (code, scope) {
-      return Function(`
-        "use strict";
-        Object.assign(self, arguments[0]);
+    if (action === 'callback') {
+      const parsedArgs = stringToArgs(args, callbacks.add, run);
 
-        return (async function() {
-          ${code}
-        })();
-      `)(scope);
+      const fn = callbacks.get(id);
+      if (!fn) {
+        return;
+      }
+      const result = await fn(...parsedArgs);
+      port.postMessage(['return', { id: resolve, args: argsToString([result]) }]);
     }
-
-    const scope = parseScope(workerboxEvent.data.scope);
-    const result = await execute(workerboxEvent.data.code, scope);
-
-    self.postMessage({
-      messageNumber: workerboxEvent.data.messageNumber,
-      origin: workerboxEvent.data.origin,
-      result
-    });
-  } catch (error) {
-    self.postMessage({
-      messageNumber: workerboxEvent.data.messageNumber,
-      origin: workerboxEvent.data.origin,
-      error
-    });
-  }
+  };
 });

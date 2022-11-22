@@ -24,12 +24,12 @@
   "license": "MIT",
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.1",
-    "@codemirror/state": "^6.1.2",
+    "@codemirror/state": "^6.1.4",
     "codemirror": "^6.0.1",
     "workerboxjs": "file:../"
   },
   "devDependencies": {
-    "esbuild": "^0.15.12",
+    "esbuild": "^0.15.15",
     "servatron": "^2.4.2"
   }
 }
