@@ -6,17 +6,29 @@ const { test, run } = createTestSuite({ concurrency: 1 });
 test('simple evaluation', async (t) => {
   t.plan(1);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
-
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
   const result = await run('return 1 + 1');
 
+  t.ok(result === 2, `${result} should equal 2`);
+});
+
+test('destroy works', async (t) => {
+  t.plan(1);
+
+  const { run, destroy } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const scope = {
+    fail: () => t.fail('should not have been called')
+  };
+
+  const result = await run('setTimeout(fail, 200); return 1 + 1;', scope);
+  destroy();
   t.ok(result === 2, `${result} should equal 2`);
 });
 
 test('syntax error throws', async (t) => {
   t.plan(1);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
 
   await run('return 1 +')
     .catch(error => {
@@ -27,7 +39,7 @@ test('syntax error throws', async (t) => {
 test('simple evaluation with function', async (t) => {
   t.plan(1);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
 
   const result = await run(`
     function add (a, b) {
@@ -43,7 +55,7 @@ test('simple evaluation with function', async (t) => {
 test('function on scope can get called', async (t) => {
   t.plan(2);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
   const scope = {
     finish: () => {
       t.ok(true, 'finish should be called');
@@ -61,7 +73,7 @@ test('function on scope can get called', async (t) => {
 test('function on scope can have callback as an argument', async (t) => {
   t.plan(3);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
   const scope = {
     first: (arg1, returnHello) => {
       t.ok(true, 'first should be called');
@@ -83,7 +95,7 @@ test('function on scope can have callback as an argument', async (t) => {
 test('returns a promise', async (t) => {
   t.plan(1);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
   const scope = {
     test: () => 200
   };
@@ -100,7 +112,7 @@ test('returns a promise', async (t) => {
 test('function on scope can return value', async (t) => {
   t.plan(1);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
   const scope = {
     test: () => {
       return 200;
@@ -117,7 +129,7 @@ test('function on scope can return value', async (t) => {
 test('callback as a function can return a value', async (t) => {
   t.plan(1);
 
-  const run = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
 
   let storedCallback;
   const scope = {
