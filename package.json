@@ -11,7 +11,7 @@
     "test": "node test"
   },
   "files": [
-    "lib/index.js"
+    "lib"
   ],
   "keywords": [
     "sandbox",
