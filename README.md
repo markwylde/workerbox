@@ -67,8 +67,12 @@ npm run start
 ```
 
 ### Run the tests
+
+Start a local server and run the tests:
+
 ```
-npm run test
+npm start&
+npm test
 ```
 
 Visit https://0.0.0.0:8000 in your browser.
