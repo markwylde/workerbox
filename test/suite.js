@@ -12,6 +12,15 @@ test('simple evaluation', async (t) => {
   t.ok(result === 2, `${result} should equal 2`);
 });
 
+test('returning an array', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const result = await run('return [1]');
+
+  t.deepEqual(result, [1], `${result} should equal [1]`);
+});
+
 test('consecutive runs work', async (t) => {
   t.plan(2);
 
@@ -203,6 +212,49 @@ test('callback as a function can return a value', async (t) => {
 
   t.equal(await storedCallback(), 'worked');
 });
+
+import argsToString from "../lib/argsToString"
+import stringToArgs from "../lib/stringToArgs"
+import scopeToString from '../lib/scopeToString.js';
+import stringToScope from '../lib/stringToScope';
+
+test('argsToString and stringToArgs', async (t) => {
+  input = [{
+    foo: "bar",
+    nested: {
+      "asdf": "qwer"
+    },
+    array: [
+      1,
+      {
+        "three": 3
+      }
+    ]
+  }]
+
+  const stringified = argsToString(input, f => f, f => { throw Error("runCallback should not be called") })
+  const result = stringToArgs(stringified)
+  t.deepEqual(result, input, `Expected ${JSON.stringify(result)} to equal ${JSON.stringify(input)}`)
+})
+
+test('scopeToString and stringToScope', async (t) => {
+  input = {
+    foo: "bar",
+    nested: {
+      "asdf": "qwer"
+    },
+    array: [
+      1,
+      {
+        "three": 3
+      }
+    ]
+  }
+
+  const stringified = scopeToString(input, f => f, f => { throw Error("runCallback should not be called") })
+  const result = stringToScope(stringified)
+  t.deepEqual(result, input, `Expected ${JSON.stringify(result)} to equal ${JSON.stringify(input)}`)
+})
 
 run().then(stats => {
   console.log('$$TEST_BROWSER_CLOSE$$:' + JSON.stringify(stats));
