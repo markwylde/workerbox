@@ -18,9 +18,15 @@ import createWorkerBox from 'workerboxjs';
 // Note each `workerbox` instance has it's own sandbox
 const { run, destroy } = await createWorkerBox('https://sandbox.workerbox.net/');
 
+let callback;
 const scope = {
   name: 'Mark',
-  getMessage: () => 'Have a great day!'
+  getMessage: () => 'Have a great day!',
+  setCallback: fn => {
+    // you can store arguments, objects, arrays and returned values
+    // outside of the scope of your main app.
+    callback = fn;
+  }
 };
 
 // You can save state between running code
@@ -66,6 +72,8 @@ npm install
 npm run start
 ```
 
+Visit https://0.0.0.0:8000 in your browser.
+
 ### Run the tests
 
 Build the server side component and run the tests:
@@ -75,11 +83,9 @@ npm run build
 npm test
 ```
 
-Visit https://0.0.0.0:8000 in your browser.
-
 ## How does it work?
 An iframe is inserted into the page from a completely separate domain.
 
 The iframe then creates a web worker, and handles posting messages between the iframe, webworker and your own app.
 
-Because the only communication between the user code and the workerbox instead is done through messaging, the argument inputs and outputs must all be JSON serializable.
+Because the only communication between the user code and the workerbox is done through messaging, the argument inputs and outputs must all be JSON serializable.

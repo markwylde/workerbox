@@ -1,7 +1,43 @@
+/* global serverUrl */
+
 import createTestSuite from 'just-tap';
+import argsToString from '../lib/argsToString';
+import stringToArgs from '../lib/stringToArgs';
+import scopeToString from '../lib/scopeToString.js';
+import stringToScope from '../lib/stringToScope';
 import createWorkerBox from '../lib/index.js';
 
 const { test, run } = createTestSuite({ concurrency: 1 });
+
+test('createWorkerBox with no trailing slash', async (t) => {
+  const { scriptUrl } = await createWorkerBox('https://example.test');
+  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+});
+
+test('createWorkerBox with trailing slash', async (t) => {
+  const { scriptUrl } = await createWorkerBox('https://example.test/');
+  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+});
+
+test('createWorkerBox with no options', async (t) => {
+  const { scriptUrl } = await createWorkerBox('https://example.test');
+  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+});
+
+test('createWorkerBox with empty options', async (t) => {
+  const { scriptUrl } = await createWorkerBox('https://example.test', {});
+  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+});
+
+test('createWorkerBox with appendVersion false', async (t) => {
+  const { scriptUrl } = await createWorkerBox('https://example.test', { appendVersion: false });
+  t.equal(scriptUrl, 'https://example.test/');
+});
+
+test('createWorkerBox with appendVersion true', async (t) => {
+  const { scriptUrl } = await createWorkerBox('https://example.test', { appendVersion: true });
+  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+});
 
 test('simple evaluation', async (t) => {
   t.plan(1);
@@ -9,7 +45,7 @@ test('simple evaluation', async (t) => {
   const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
   const result = await run('return 1 + 1');
 
-  t.ok(result === 2, `${result} should equal 2`);
+  t.equal(result, 2);
 });
 
 test('returning an array', async (t) => {
@@ -213,48 +249,47 @@ test('callback as a function can return a value', async (t) => {
   t.equal(await storedCallback(), 'worked');
 });
 
-import argsToString from "../lib/argsToString"
-import stringToArgs from "../lib/stringToArgs"
-import scopeToString from '../lib/scopeToString.js';
-import stringToScope from '../lib/stringToScope';
-
 test('argsToString and stringToArgs', async (t) => {
   input = [{
-    foo: "bar",
+    foo: 'bar',
     nested: {
-      "asdf": "qwer"
+      asdf: 'qwer'
     },
     array: [
       1,
       {
-        "three": 3
+        three: 3
       }
     ]
-  }]
+  }];
 
-  const stringified = argsToString(input, f => f, f => { throw Error("runCallback should not be called") })
-  const result = stringToArgs(stringified)
-  t.deepEqual(result, input, `Expected ${JSON.stringify(result)} to equal ${JSON.stringify(input)}`)
-})
+  const stringified = argsToString(input, f => f, f => {
+    t.fail('runCallback should not be called');
+  });
+  const result = stringToArgs(stringified);
+  t.deepEqual(result, input);
+});
 
 test('scopeToString and stringToScope', async (t) => {
   input = {
-    foo: "bar",
+    foo: 'bar',
     nested: {
-      "asdf": "qwer"
+      asdf: 'qwer'
     },
     array: [
       1,
       {
-        "three": 3
+        three: 3
       }
     ]
-  }
+  };
 
-  const stringified = scopeToString(input, f => f, f => { throw Error("runCallback should not be called") })
-  const result = stringToScope(stringified)
-  t.deepEqual(result, input, `Expected ${JSON.stringify(result)} to equal ${JSON.stringify(input)}`)
-})
+  const stringified = scopeToString(input, f => f, f => {
+    t.fail('runCallback should not be called');
+  });
+  const result = stringToScope(stringified);
+  t.deepEqual(result, input);
+});
 
 run().then(stats => {
   console.log('$$TEST_BROWSER_CLOSE$$:' + JSON.stringify(stats));
