@@ -32,8 +32,13 @@ async function build () {
   }
 
   const jsData = await fs.promises.readFile('./server/dist/worker.js', 'utf8');
-  const htmlData = await fs.promises.readFile('./server/index.html', 'utf8');
-  await fs.promises.writeFile('./server/dist/index.html', htmlData.replace('{{WORKERSCRIPT}}', jsData));
+  let htmlData = await fs.promises.readFile('./server/index.html', 'utf8');
+  htmlData = htmlData.replace('{{WORKERSCRIPT}}', jsData);
+  await fs.promises.writeFile('./server/dist/index.html', htmlData);
+  await fs.promises.writeFile(
+    './lib/builtinWorker.html.js',
+    '// built from the ./server/dist/index.html file during npm run build\nexport default builtinWorker = atob(`' + Buffer.from(htmlData).toString('base64') + '`);'
+  );
   await fs.promises.rm('./server/dist/worker.js');
 }
 

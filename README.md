@@ -2,11 +2,6 @@
 A secure sandbox to execute untrusted user JavaScript, in a web browser, without any risk to your own domain/site/page.
 
 ## Installation
-To ensure the untrusted code can not access any data, permissions,  that have been given to your site, it's important the evaluator is run on a domain completely separate from your own site.
-
-The separate domain code is located in the [`./server`](./server) folder of this repo. You can host it yourself, but make sure it's on another domain, or feel free to use the default one for free at [https://workerbox.net/](https://workerbox.net/).
-
-### Install npmjs
 ```
 npm install --save workerboxjs
 ```
@@ -16,7 +11,7 @@ npm install --save workerboxjs
 import createWorkerBox from 'workerboxjs';
 
 // Note each `workerbox` instance has it's own sandbox
-const { run, destroy } = await createWorkerBox('https://sandbox.workerbox.net/');
+const { run, destroy } = await createWorkerBox();
 
 let callback;
 const scope = {
@@ -92,8 +87,19 @@ npm test
 ```
 
 ## How does it work?
-An iframe is inserted into the page from a completely separate domain.
+An iframe is inserted into the page (optionally from a completely separate domain).
 
 The iframe then creates a web worker, and handles posting messages between the iframe, webworker and your own app.
 
 Because the only communication between the user code and the workerbox is done through messaging, the argument inputs and outputs must all be JSON serializable.
+
+
+### Separate domain
+While the iframe has the `sandbox="allow-scripts"` attribute set, and therefore acts like it's on another domain, you can still run the server on another domain if you wish.
+
+```javascript
+const { run } = await createWorkerBox({
+  serverUrl: 'https://sandbox.workerbox.net',
+  appendVersion: true
+});
+```
