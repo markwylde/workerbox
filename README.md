@@ -68,10 +68,10 @@ npm run start
 
 ### Run the tests
 
-Start a local server and run the tests:
+Build the server side component and run the tests:
 
 ```
-npm start&
+npm run build
 npm test
 ```
 
