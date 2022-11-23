@@ -1,4 +1,5 @@
 /* global serverUrl */
+import packageJson from '../package.json' assert {type: 'json'};
 
 import createTestSuite from 'just-tap';
 import argsToString from '../lib/argsToString';
@@ -11,22 +12,22 @@ const { test, run } = createTestSuite({ concurrency: 1 });
 
 test('createWorkerBox with no trailing slash', async (t) => {
   const { scriptUrl } = await createWorkerBox('https://example.test');
-  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('createWorkerBox with trailing slash', async (t) => {
   const { scriptUrl } = await createWorkerBox('https://example.test/');
-  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('createWorkerBox with no options', async (t) => {
   const { scriptUrl } = await createWorkerBox('https://example.test');
-  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('createWorkerBox with empty options', async (t) => {
   const { scriptUrl } = await createWorkerBox('https://example.test', {});
-  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('createWorkerBox with appendVersion false', async (t) => {
@@ -36,7 +37,7 @@ test('createWorkerBox with appendVersion false', async (t) => {
 
 test('createWorkerBox with appendVersion true', async (t) => {
   const { scriptUrl } = await createWorkerBox('https://example.test', { appendVersion: true });
-  t.equal(scriptUrl, 'https://example.test/v4.0.3/');
+  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('simple evaluation', async (t) => {
