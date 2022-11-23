@@ -23,11 +23,19 @@ const scope = {
   name: 'Mark',
   getMessage: () => 'Have a great day!',
   setCallback: fn => {
-    // you can store arguments, objects, arrays and returned values
-    // outside of the scope of your main app.
+    // You can store arguments, objects, arrays and returned values
+    // outside of the scope of your main app, and then call them
+    // from anywhere, so long as the worker is not destroyed.
     callback = fn;
   }
 };
+
+setInterval(() => {
+  if (callback) {
+    // This will communicate with the workerbox transparently.
+    callback();
+  }
+});
 
 // You can save state between running code
 // But this will not save between different workerbox instances.
