@@ -67,8 +67,12 @@ npm run start
 ```
 
 ### Run the tests
+
+Build the server side component and run the tests:
+
 ```
-npm run test
+npm run build
+npm test
 ```
 
 Visit https://0.0.0.0:8000 in your browser.

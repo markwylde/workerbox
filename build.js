@@ -41,7 +41,7 @@ if (isWatching) {
   const debouncedBuild = debounce(build, 300);
   chokidar.watch(
     ['./utils/*', './lib/*', './server'], {
-      ignored: ['**/dist']
+      ignored: ['**/dist/**']
     }).on('all', (why, what) => {
     console.log(new Date(), why, what);
     debouncedBuild();
