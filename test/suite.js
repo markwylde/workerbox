@@ -58,6 +58,15 @@ test('returning an array', async (t) => {
   t.deepEqual(result, [1], `${result} should equal [1]`);
 });
 
+test.only("returning null", async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const result = await run("return [1]");
+
+  t.deepEqual(result, [1], `${result} should equal [1]`);
+});
+
 test('consecutive runs work', async (t) => {
   t.plan(2);
 
@@ -260,7 +269,8 @@ test('argsToString and stringToArgs', async (t) => {
       1,
       {
         three: 3
-      }
+      },
+      null
     ]
   }];
 
@@ -281,7 +291,8 @@ test('scopeToString and stringToScope', async (t) => {
       1,
       {
         three: 3
-      }
+      },
+      null
     ]
   };
 
