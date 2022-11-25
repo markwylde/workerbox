@@ -1,3 +1,4 @@
 node_modules
 demo/index.min.js
 server/dist
+.env
