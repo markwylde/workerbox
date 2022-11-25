@@ -58,7 +58,7 @@ test('returning an array', async (t) => {
   t.deepEqual(result, [1], `${result} should equal [1]`);
 });
 
-test.only("returning null", async (t) => {
+test("returning null", async (t) => {
   t.plan(1);
 
   const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
