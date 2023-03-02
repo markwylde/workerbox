@@ -34,7 +34,7 @@ self.addEventListener('message', async (event) => {
       } catch (error) {
         try {
           const lines = error.stack.split('\n');
-          error.stack = [
+          const stack = [
             lines[0],
             ...lines
               .filter(line => line.includes('(eval at scopedEval'))
@@ -45,7 +45,7 @@ self.addEventListener('message', async (event) => {
                 return `${splitted[0]}(<sandbox>:${lineNumber - 3}:${charNumber})`
               })
           ].slice(0, -1).join('\n');
-          port.postMessage(['error', { id: errorId, args: argsToString([error.stack || error.message]) }]);
+          port.postMessage(['error', { id: errorId, args: argsToString([stack || error.message]) }]);
         } catch (error2) {
           port.postMessage(['error', { id: errorId, args: argsToString([error.message]) }]);
         }
