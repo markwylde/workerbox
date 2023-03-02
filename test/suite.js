@@ -161,7 +161,7 @@ test('runtime error throws', async (t) => {
   return b();
   `)
     .catch(error => {
-      t.ok(error.message === 'TypeError: b is not a function\n    at sandbox (<sandbox>:3:10)');
+      t.equal(error.message, 'TypeError: b is not a function\n    at sandbox (<sandbox>:3:10)');
     });
 });
 
