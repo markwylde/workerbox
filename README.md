@@ -62,7 +62,7 @@ destroy()
 ## Errors and Stack traces
 Runtime errors should have readable stacktraces, for example:
 
-** The following code **
+**The following code:**
 ```javascript
 await run(`
   const a = 1;
@@ -70,7 +70,7 @@ await run(`
 `);
 ```
 
-** Should return the following error **
+**Should return the following error:**
 ```text
 TypeError: a is not a function
     at sandbox (<sandbox>:2:2)
@@ -78,14 +78,14 @@ TypeError: a is not a function
 
 However syntax errors will not have a stack trace, for example:
 
-** The following code **
+**The following code:**
 ```javascript
 await run(`
   return 1 +
 `);
 ```
 
-** Should return the following error **
+**Should return the following error:**
 ```text
 Unexpected token '}'
 ```
