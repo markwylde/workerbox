@@ -140,9 +140,28 @@ test('syntax error throws', async (t) => {
 
   const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
 
-  await run('return 1 +')
+  await run(`
+  const a = 1;
+  const b = 2;
+  return 1 +
+  `)
     .catch(error => {
-      t.ok(error.message === 'Unexpected token \'}\'', `'${error.message}' should equal 'Unexpected token '}'`);
+      t.equal(error.message, 'Unexpected token \'}\'');
+    });
+});
+
+test('runtime error throws', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+
+  await run(`
+  const a = 1;
+  const b = 2;
+  return b();
+  `)
+    .catch(error => {
+      t.ok(error.message === 'TypeError: b is not a function\n    at sandbox (<sandbox>:3:10)');
     });
 });
 
