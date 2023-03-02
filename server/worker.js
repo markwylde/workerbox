@@ -3,10 +3,10 @@ import stringToScope from '../lib/stringToScope.js';
 import stringToArgs from '../lib/stringToArgs.js';
 import argsToString from '../lib/argsToString.js';
 
-function scopedEval (context, expr) {
+async function scopedEval (context, expr) {
   const evaluator = Function.apply(null, [
     ...Object.keys(context),
-    `return (async function () {${expr} })()`
+    `return (async function sandbox () {${expr} })()`
   ]);
   return evaluator.apply(null, [...Object.values(context)]);
 }
@@ -32,7 +32,23 @@ self.addEventListener('message', async (event) => {
 
         port.postMessage(['return', { id, args: argsToString([result]) }]);
       } catch (error) {
-        port.postMessage(['error', { id: errorId, args: argsToString([error.message]) }]);
+        try {
+          const lines = error.stack.split('\n');
+          const stack = [
+            lines[0],
+            ...lines
+              .filter(line => line.includes('(eval at scopedEval'))
+              .map(line => {
+                const splitted = line.split('(eval at scopedEval (');
+                const [, mixedPosition] = line.split('<anonymous>');
+                const [, lineNumber, charNumber] = mixedPosition.slice(0, -1).split(':');
+                return `${splitted[0]}(<sandbox>:${lineNumber - 3}:${charNumber})`
+              })
+          ].slice(0, -1).join('\n');
+          port.postMessage(['error', { id: errorId, args: argsToString([stack || error.message]) }]);
+        } catch (error2) {
+          port.postMessage(['error', { id: errorId, args: argsToString([error.message]) }]);
+        }
       }
     }
 

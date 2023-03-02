@@ -59,6 +59,39 @@ const result = await run(`
 destroy()
 ```
 
+## Errors and Stack traces
+Runtime errors should have readable stacktraces, for example:
+
+**The following code:**
+```javascript
+await run(`
+  const a = 1;
+  a();
+`);
+```
+
+**Should return the following error:**
+```text
+TypeError: a is not a function
+    at sandbox (<sandbox>:2:2)
+```
+
+However syntax errors will not have a stack trace, for example:
+
+**The following code:**
+```javascript
+await run(`
+  return 1 +
+`);
+```
+
+**Should return the following error:**
+```text
+Unexpected token '}'
+```
+
+It would be helpful for your users if you ran the script through a linter or ast parser, to ensure the JavaScript is valid, and provide useful errors if not.
+
 ## Development
 If you want to check this project out locally, you can do the following:
 
