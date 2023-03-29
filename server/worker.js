@@ -11,6 +11,22 @@ async function scopedEval (context, expr) {
   return evaluator.apply(null, [...Object.values(context)]);
 }
 
+const getStack = (error, slice) => {
+  const lines = error.stack.split('\n');
+  const stack = [
+    lines[0],
+    ...lines
+      .filter(line => line.includes('(eval at scopedEval'))
+      .map(line => {
+        const splitted = line.split('(eval at scopedEval (');
+        const [, mixedPosition] = line.split('<anonymous>');
+        const [, lineNumber, charNumber] = mixedPosition.slice(0, -1).split(':');
+        return `${splitted[0]}(<sandbox>:${lineNumber - 3}:${charNumber})`
+      })
+  ].slice(0, slice).join('\n');
+  return stack;
+}
+
 self.addEventListener('message', async (event) => {
   const port = event.ports[0];
 
@@ -22,7 +38,7 @@ self.addEventListener('message', async (event) => {
 
   port.onmessage = async event => {
     const [action, message] = event.data;
-    const { id, errorId, code, scope, args, resolve } = message;
+    const { id, errorId, code, scope, args, resolve, reject } = message;
 
     if (action === 'execute') {
       const parsedScope = stringToScope(scope, callbacks.add, run);
@@ -33,18 +49,7 @@ self.addEventListener('message', async (event) => {
         port.postMessage(['return', { id, args: argsToString([result], callbacks.add, run) }]);
       } catch (error) {
         try {
-          const lines = error.stack.split('\n');
-          const stack = [
-            lines[0],
-            ...lines
-              .filter(line => line.includes('(eval at scopedEval'))
-              .map(line => {
-                const splitted = line.split('(eval at scopedEval (');
-                const [, mixedPosition] = line.split('<anonymous>');
-                const [, lineNumber, charNumber] = mixedPosition.slice(0, -1).split(':');
-                return `${splitted[0]}(<sandbox>:${lineNumber - 3}:${charNumber})`
-              })
-          ].slice(0, -1).join('\n');
+          const stack = getStack(error, -1);
           port.postMessage(['error', { id: errorId, args: argsToString([stack || error.message], callbacks.add, run) }]);
         } catch (error2) {
           port.postMessage(['error', { id: errorId, args: argsToString([error.message], callbacks.add, run) }]);
@@ -59,8 +64,13 @@ self.addEventListener('message', async (event) => {
       if (!fn) {
         return;
       }
-      const result = await fn(...parsedArgs);
-      port.postMessage(['return', { id: resolve, args: argsToString([result], callbacks.add, run) }]);
+      try {
+        const result = await fn(...parsedArgs);
+        port.postMessage(['return', { id: resolve, args: argsToString([result], callbacks.add, run) }]);
+      } catch (error) {
+        const stack = getStack(error);
+        port.postMessage(['error', { id: reject, args: argsToString([stack || error.message], callbacks.add, run) }]);
+      }
     }
   };
 });

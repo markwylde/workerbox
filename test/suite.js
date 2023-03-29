@@ -165,6 +165,24 @@ test('syntax error throws', async (t) => {
     });
 });
 
+test('syntax error throws inside function', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+
+  const result = await run(`
+    return {
+      add: (a, b) => {
+        ohno();
+      }
+    }
+  `);
+
+  result.add().catch(error => {
+    t.equal(error.message, 'ReferenceError: ohno is not defined\n    at add (<sandbox>:3:9)');
+  });
+});
+
 test('runtime error throws', async (t) => {
   t.plan(1);
 
