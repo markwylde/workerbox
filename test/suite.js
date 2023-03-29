@@ -49,6 +49,21 @@ test('simple evaluation', async (t) => {
   t.equal(result, 2);
 });
 
+test('returning an object with functions on it', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const returned = await run(`
+    return {
+      add: (a, b) => a + b
+    }
+  `);
+
+  const result = await returned.add(1, 1);
+
+  t.deepEqual(result, 2);
+});
+
 test('returning an array', async (t) => {
   t.plan(1);
 

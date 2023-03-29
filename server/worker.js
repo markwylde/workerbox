@@ -30,7 +30,7 @@ self.addEventListener('message', async (event) => {
       try {
         const result = await scopedEval(parsedScope, code);
 
-        port.postMessage(['return', { id, args: argsToString([result]) }]);
+        port.postMessage(['return', { id, args: argsToString([result], callbacks.add, run) }]);
       } catch (error) {
         try {
           const lines = error.stack.split('\n');
@@ -45,9 +45,9 @@ self.addEventListener('message', async (event) => {
                 return `${splitted[0]}(<sandbox>:${lineNumber - 3}:${charNumber})`
               })
           ].slice(0, -1).join('\n');
-          port.postMessage(['error', { id: errorId, args: argsToString([stack || error.message]) }]);
+          port.postMessage(['error', { id: errorId, args: argsToString([stack || error.message], callbacks.add, run) }]);
         } catch (error2) {
-          port.postMessage(['error', { id: errorId, args: argsToString([error.message]) }]);
+          port.postMessage(['error', { id: errorId, args: argsToString([error.message], callbacks.add, run) }]);
         }
       }
     }
@@ -60,7 +60,7 @@ self.addEventListener('message', async (event) => {
         return;
       }
       const result = await fn(...parsedArgs);
-      port.postMessage(['return', { id: resolve, args: argsToString([result]) }]);
+      port.postMessage(['return', { id: resolve, args: argsToString([result], callbacks.add, run) }]);
     }
   };
 });

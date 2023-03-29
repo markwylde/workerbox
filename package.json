@@ -1,6 +1,6 @@
 {
   "name": "workerboxjs",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "type": "module",
   "description": "A secure sandbox to execute untrusted user JavaScript, in a web browser, without any risk to your own domain/site/page.",
   "main": "lib/index.js",
@@ -37,10 +37,10 @@
     "@markwylde/ftp-deploy": "^2.0.2",
     "chokidar": "^3.5.3",
     "debounce": "^1.2.1",
-    "esbuild": "^0.17.10",
-    "just-tap": "^2.4.0",
+    "esbuild": "^0.17.14",
+    "just-tap": "^2.5.0",
     "minify": "^9.2.0",
-    "puppeteer": "^19.7.2",
+    "puppeteer": "^19.8.2",
     "servatron": "^2.4.3"
   }
 }
