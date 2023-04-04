@@ -58,11 +58,35 @@ test('simple evaluation', async (t) => {
   t.equal(result, 2);
 });
 
+test('returning an object with functions on it', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox({ appendVersion: false });
+  const returned = await run(`
+    return {
+      add: (a, b) => a + b
+    }
+  `);
+
+  const result = await returned.add(1, 1);
+
+  t.deepEqual(result, 2);
+});
+
 test('returning an array', async (t) => {
   t.plan(1);
 
   const { run } = await createWorkerBox();
   const result = await run('return [1]');
+
+  t.deepEqual(result, [1], `${result} should equal [1]`);
+});
+
+test("returning null", async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox({ appendVersion: false });
+  const result = await run("return [1]");
 
   t.deepEqual(result, [1], `${result} should equal [1]`);
 });
@@ -140,9 +164,46 @@ test('syntax error throws', async (t) => {
 
   const { run } = await createWorkerBox();
 
-  await run('return 1 +')
+  await run(`
+  const a = 1;
+  const b = 2;
+  return 1 +
+  `)
     .catch(error => {
-      t.ok(error.message === 'Unexpected token \'}\'', `'${error.message}' should equal 'Unexpected token '}'`);
+      t.equal(error.message, 'Unexpected token \'}\'');
+    });
+});
+
+test('syntax error throws inside function', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox({ appendVersion: false });
+
+  const result = await run(`
+    return {
+      add: (a, b) => {
+        ohno();
+      }
+    }
+  `);
+
+  result.add().catch(error => {
+    t.equal(error.message, 'ReferenceError: ohno is not defined\n    at add (<sandbox>:3:9)');
+  });
+});
+
+test('runtime error throws', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox({ appendVersion: false });
+
+  await run(`
+  const a = 1;
+  const b = 2;
+  return b();
+  `)
+    .catch(error => {
+      t.equal(error.message, 'TypeError: b is not a function\n    at sandbox (<sandbox>:3:10)');
     });
 });
 
@@ -269,7 +330,8 @@ test('argsToString and stringToArgs', async (t) => {
       1,
       {
         three: 3
-      }
+      },
+      null
     ]
   }];
 
@@ -290,7 +352,8 @@ test('scopeToString and stringToScope', async (t) => {
       1,
       {
         three: 3
-      }
+      },
+      null
     ]
   };
 
