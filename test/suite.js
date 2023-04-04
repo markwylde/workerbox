@@ -11,39 +11,48 @@ import createWorkerBox from '../lib/index.js';
 const { test, run } = createTestSuite({ concurrency: 1 });
 
 test('createWorkerBox with no trailing slash', async (t) => {
-  const { scriptUrl } = await createWorkerBox('https://example.test');
-  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
+  const { options } = await createWorkerBox({ serverUrl: 'https://example.test' });
+  t.equal(options.serverUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('createWorkerBox with trailing slash', async (t) => {
-  const { scriptUrl } = await createWorkerBox('https://example.test/');
-  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
+  const { options } = await createWorkerBox({ serverUrl: 'https://example.test/' });
+  t.equal(options.serverUrl, `https://example.test/v${packageJson.version}/`);
 });
 
 test('createWorkerBox with no options', async (t) => {
-  const { scriptUrl } = await createWorkerBox('https://example.test');
-  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
+  const { options } = await createWorkerBox();
+  t.equal(options.serverUrl, null);
 });
 
 test('createWorkerBox with empty options', async (t) => {
-  const { scriptUrl } = await createWorkerBox('https://example.test', {});
-  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
+  const { options } = await createWorkerBox({});
+  t.equal(options.serverUrl, null);
 });
 
 test('createWorkerBox with appendVersion false', async (t) => {
-  const { scriptUrl } = await createWorkerBox('https://example.test', { appendVersion: false });
-  t.equal(scriptUrl, 'https://example.test/');
+  const { options } = await createWorkerBox({ serverUrl: 'https://example.test/', appendVersion: false });
+  t.equal(options.serverUrl, 'https://example.test/');
 });
 
 test('createWorkerBox with appendVersion true', async (t) => {
-  const { scriptUrl } = await createWorkerBox('https://example.test', { appendVersion: true });
-  t.equal(scriptUrl, `https://example.test/v${packageJson.version}/`);
+  const { options } = await createWorkerBox({ serverUrl: 'https://example.test/', appendVersion: true });
+  t.equal(options.serverUrl, `https://example.test/v${packageJson.version}/`);
+});
+
+test('simple evaluation while using serverUrl', async (t) => {
+  t.plan(1);
+
+  const { run } = await createWorkerBox({ serverUrl, appendVersion: false });
+  const result = await run('return 1 + 1');
+
+  t.equal(result, 2);
 });
 
 test('simple evaluation', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const result = await run('return 1 + 1');
 
   t.equal(result, 2);
@@ -52,7 +61,7 @@ test('simple evaluation', async (t) => {
 test('returning an object with functions on it', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox({ appendVersion: false });
   const returned = await run(`
     return {
       add: (a, b) => a + b
@@ -67,7 +76,7 @@ test('returning an object with functions on it', async (t) => {
 test('returning an array', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const result = await run('return [1]');
 
   t.deepEqual(result, [1], `${result} should equal [1]`);
@@ -76,7 +85,7 @@ test('returning an array', async (t) => {
 test("returning null", async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox({ appendVersion: false });
   const result = await run("return [1]");
 
   t.deepEqual(result, [1], `${result} should equal [1]`);
@@ -85,7 +94,7 @@ test("returning null", async (t) => {
 test('consecutive runs work', async (t) => {
   t.plan(2);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const result1 = await run('return 1');
   const result2 = await run('return 2');
 
@@ -96,7 +105,7 @@ test('consecutive runs work', async (t) => {
 test('same workerbox instance should share globalThis', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   await run('globalThis.a = 1');
   const result = await run('return globalThis.a');
 
@@ -106,7 +115,7 @@ test('same workerbox instance should share globalThis', async (t) => {
 test('same workerbox instance should share self', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   await run('self.a = 1');
   const result = await run('return self.a');
 
@@ -116,8 +125,8 @@ test('same workerbox instance should share self', async (t) => {
 test('two workerbox instances do not share globalThis', async (t) => {
   t.plan(2);
 
-  const { run: run1 } = await createWorkerBox(serverUrl, { appendVersion: false });
-  const { run: run2 } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run: run1 } = await createWorkerBox();
+  const { run: run2 } = await createWorkerBox();
   const result1 = await run1('globalThis.a = 1; return globalThis.a;');
   const result2 = await run2('return globalThis.a');
 
@@ -128,8 +137,8 @@ test('two workerbox instances do not share globalThis', async (t) => {
 test('two workerbox instances do not share self', async (t) => {
   t.plan(2);
 
-  const { run: run1 } = await createWorkerBox(serverUrl, { appendVersion: false });
-  const { run: run2 } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run: run1 } = await createWorkerBox();
+  const { run: run2 } = await createWorkerBox();
   const result1 = await run1('self.a = 1; return self.a;');
   const result2 = await run2('return self.a');
 
@@ -140,7 +149,7 @@ test('two workerbox instances do not share self', async (t) => {
 test('destroy works', async (t) => {
   t.plan(1);
 
-  const { run, destroy } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run, destroy } = await createWorkerBox();
   const scope = {
     fail: () => t.fail('should not have been called')
   };
@@ -153,7 +162,7 @@ test('destroy works', async (t) => {
 test('syntax error throws', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
 
   await run(`
   const a = 1;
@@ -168,7 +177,7 @@ test('syntax error throws', async (t) => {
 test('syntax error throws inside function', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox({ appendVersion: false });
 
   const result = await run(`
     return {
@@ -186,7 +195,7 @@ test('syntax error throws inside function', async (t) => {
 test('runtime error throws', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox({ appendVersion: false });
 
   await run(`
   const a = 1;
@@ -201,7 +210,7 @@ test('runtime error throws', async (t) => {
 test('simple evaluation with function', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
 
   const result = await run(`
     function add (a, b) {
@@ -217,7 +226,7 @@ test('simple evaluation with function', async (t) => {
 test('function on scope can get called', async (t) => {
   t.plan(2);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const scope = {
     finish: () => {
       t.ok(true, 'finish should be called');
@@ -235,7 +244,7 @@ test('function on scope can get called', async (t) => {
 test('function on scope can have callback as an argument', async (t) => {
   t.plan(3);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const scope = {
     first: (arg1, returnHello) => {
       t.ok(true, 'first should be called');
@@ -257,7 +266,7 @@ test('function on scope can have callback as an argument', async (t) => {
 test('returns a promise', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const scope = {
     test: () => 200
   };
@@ -274,7 +283,7 @@ test('returns a promise', async (t) => {
 test('function on scope can return value', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
   const scope = {
     test: () => {
       return 200;
@@ -291,7 +300,7 @@ test('function on scope can return value', async (t) => {
 test('callback as a function can return a value', async (t) => {
   t.plan(1);
 
-  const { run } = await createWorkerBox(serverUrl, { appendVersion: false });
+  const { run } = await createWorkerBox();
 
   let storedCallback;
   const scope = {
