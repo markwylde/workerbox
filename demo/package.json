@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@codemirror/lang-javascript": "^6.1.1",
+    "@codemirror/lang-javascript": "^6.1.9",
     "@codemirror/state": "^6.1.4",
     "codemirror": "^6.0.1",
     "debounce": "^1.2.1",
