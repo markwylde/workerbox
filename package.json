@@ -37,10 +37,10 @@
     "@markwylde/ftp-deploy": "^2.0.2",
     "chokidar": "^3.5.3",
     "debounce": "^1.2.1",
-    "esbuild": "^0.17.15",
+    "esbuild": "^0.18.10",
     "just-tap": "^2.5.0",
-    "minify": "^9.2.0",
-    "puppeteer": "^19.8.3",
+    "minify": "^10.2.0",
+    "puppeteer": "^20.7.4",
     "servatron": "^2.4.3"
   }
 }

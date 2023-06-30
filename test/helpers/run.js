@@ -5,7 +5,7 @@ import createServer from './createServer.js';
 async function run (code) {
   const server = await createServer(code);
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: 'new',
     defaultViewport: null,
     devtools: true,
     args: ['--ignore-certificate-errors']
