@@ -46,8 +46,8 @@ async function build () {
 if (isWatching) {
   const debouncedBuild = debounce(build, 300);
   chokidar.watch(
-    ['./utils/*', './lib/*', './server'], {
-      ignored: ['**/dist/**']
+    ['./lib/*', './server'], {
+      ignored: ['**/dist/**', './lib/builtinWorker.html.js']
     }).on('all', (why, what) => {
     console.log(new Date(), why, what);
     debouncedBuild();
