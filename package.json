@@ -34,13 +34,13 @@
   },
   "homepage": "https://github.com/markwylde/workerbox#readme",
   "devDependencies": {
-    "@markwylde/ftp-deploy": "^2.0.2",
-    "chokidar": "^3.5.3",
-    "debounce": "^1.2.1",
-    "esbuild": "^0.18.17",
-    "just-tap": "^2.9.3",
-    "minify": "^10.3.0",
-    "puppeteer": "^20.9.0",
-    "servatron": "^2.4.3"
+    "@markwylde/ftp-deploy": "^2.0.3",
+    "chokidar": "^3.6.0",
+    "debounce": "^2.1.0",
+    "esbuild": "^0.21.5",
+    "just-tap": "^2.9.4",
+    "minify": "^9.2.0",
+    "puppeteer": "^22.12.1",
+    "servatron": "^2.5.0"
   }
 }

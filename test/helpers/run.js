@@ -25,29 +25,28 @@ async function run (code) {
       setTimeout(() => reject(error), 300);
     });
     page.on('console', async message => {
-      const describe = arg => arg
-        .executionContext()
-        .evaluate(object => {
-          if (object instanceof Error) {
-            return object.stack;
-          }
-          if (typeof object === 'object') {
-            const getCircularReplacer = () => {
-              const seen = new WeakSet();
-              return (key, value) => {
-                if (typeof value === 'object' && value !== null) {
-                  if (seen.has(value)) {
-                    return;
-                  }
-                  seen.add(value);
+      const describe = async arg => {
+        const value = await arg.jsonValue();
+        if (value instanceof Error) {
+          return value.stack;
+        }
+        if (typeof value === 'object') {
+          const getCircularReplacer = () => {
+            const seen = new WeakSet();
+            return (key, value) => {
+              if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                  return;
                 }
-                return value;
-              };
+                seen.add(value);
+              }
+              return value;
             };
-            return JSON.stringify(object, getCircularReplacer(), 2);
-          }
-          return object;
-        }, arg);
+          };
+          return JSON.stringify(value, getCircularReplacer(), 2);
+        }
+        return value;
+      };
 
       const messages = [];
       for (const arg of message.args()) {
