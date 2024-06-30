@@ -8,10 +8,14 @@ const isWatching = process.argv[2] === '--watch';
 
 const minifyOptions = {
   js: {
-    ecma: '2020',
-    keep_fnames: true,
-    mangle: {
-      toplevel: true
+    type: 'terser',
+    terser: {
+      compress: {
+        keep_fnames: true
+      },
+      mangle: {
+        keep_fnames: true
+      }
     }
   }
 };

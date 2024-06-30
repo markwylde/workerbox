@@ -39,7 +39,7 @@
     "debounce": "^2.1.0",
     "esbuild": "^0.21.5",
     "just-tap": "^2.9.4",
-    "minify": "^9.2.0",
+    "minify": "^11.2.1",
     "puppeteer": "^22.12.1",
     "servatron": "^2.5.0"
   }
