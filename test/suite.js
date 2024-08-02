@@ -321,7 +321,7 @@ test('callback as a function can return a value', async (t) => {
 });
 
 test('argsToString and stringToArgs', async (t) => {
-  input = [{
+  const input = [{
     foo: 'bar',
     nested: {
       asdf: 'qwer'
@@ -343,7 +343,7 @@ test('argsToString and stringToArgs', async (t) => {
 });
 
 test('scopeToString and stringToScope', async (t) => {
-  input = {
+  const input = {
     foo: 'bar',
     nested: {
       asdf: 'qwer'
