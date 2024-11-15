@@ -87,7 +87,8 @@
   the iframe, webworker and your own app.<p>
 
 <p>Because the only communication between the user code and the workerbox instead
-  is done through messaging, the argument inputs and outputs must all be JSON
-  serializable.</p>
+  is done through messaging, the argument inputs and outputs must all be
+  serializable. We use <a href="https://github.com/flightcontrolhq/superjson">SuperJSON</a>
+  for serialization and deserialization.</p>
 </body>
 </html>
