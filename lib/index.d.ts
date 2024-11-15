@@ -1,4 +1,5 @@
 declare type WorkerBoxOptions = {
+  scriptUrl?: string,
   appendVersion?: boolean;
 };
 
@@ -9,9 +10,6 @@ export type WorkerBox = {
   destroy: () => void;
 };
 
-declare function createWorkerBox(
-  scriptUrl?: string,
-  options?: WorkerBoxOptions
-): Promise<WorkerBox>;
+declare function createWorkerBox(options?: WorkerBoxOptions): Promise<WorkerBox>;
 
 export default createWorkerBox;
