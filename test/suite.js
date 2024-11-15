@@ -2,11 +2,8 @@
 import packageJson from '../package.json' assert {type: 'json'};
 
 import createTestSuite from 'just-tap';
-import argsToString from '../lib/argsToString';
-import stringToArgs from '../lib/stringToArgs';
-import scopeToString from '../lib/scopeToString.js';
-import stringToScope from '../lib/stringToScope';
 import createWorkerBox from '../lib/index.js';
+import createSuperJSON from '../lib/createSuperJSON.js';
 
 const { test, run } = createTestSuite({ concurrency: 1 });
 
@@ -131,7 +128,7 @@ test('two workerbox instances do not share globalThis', async (t) => {
   const result2 = await run2('return globalThis.a');
 
   t.equal(result1, 1);
-  t.equal(result2, null);
+  t.equal(result2, undefined);
 });
 
 test('two workerbox instances do not share self', async (t) => {
@@ -143,7 +140,7 @@ test('two workerbox instances do not share self', async (t) => {
   const result2 = await run2('return self.a');
 
   t.equal(result1, 1);
-  t.equal(result2, null);
+  t.equal(result2, undefined);
 });
 
 test('destroy works', async (t) => {
@@ -320,7 +317,7 @@ test('callback as a function can return a value', async (t) => {
   t.equal(await storedCallback(), 'worked');
 });
 
-test('argsToString and stringToArgs', async (t) => {
+test('SuperJSON', async (t) => {
   const input = [{
     foo: 'bar',
     nested: {
@@ -335,32 +332,12 @@ test('argsToString and stringToArgs', async (t) => {
     ]
   }];
 
-  const stringified = argsToString(input, f => f, f => {
+  const superjson = createSuperJSON(f => f, f => {
     t.fail('runCallback should not be called');
   });
-  const result = stringToArgs(stringified);
-  t.deepEqual(result, input);
-});
 
-test('scopeToString and stringToScope', async (t) => {
-  const input = {
-    foo: 'bar',
-    nested: {
-      asdf: 'qwer'
-    },
-    array: [
-      1,
-      {
-        three: 3
-      },
-      null
-    ]
-  };
-
-  const stringified = scopeToString(input, f => f, f => {
-    t.fail('runCallback should not be called');
-  });
-  const result = stringToScope(stringified);
+  const stringified = superjson.stringify(input);
+  const result = superjson.parse(stringified);
   t.deepEqual(result, input);
 });
 

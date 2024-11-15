@@ -1,7 +1,5 @@
 import createCallbackStore from '../lib/createCallbackStore.js';
-import stringToScope from '../lib/stringToScope.js';
-import stringToArgs from '../lib/stringToArgs.js';
-import argsToString from '../lib/argsToString.js';
+import createSuperJSON from '../lib/createSuperJSON.js';
 
 async function scopedEval (context, expr) {
   const evaluator = Function.apply(null, [
@@ -35,30 +33,31 @@ self.addEventListener('message', async (event) => {
     new Promise(resolve => {
       port.postMessage(['callback', { id, args, resolve: callbacks.add(resolve) }]);
     });
+  const superjson = createSuperJSON(callbacks.add, run);
 
   port.onmessage = async event => {
     const [action, message] = event.data;
     const { id, errorId, code, scope, args, resolve, reject } = message;
 
     if (action === 'execute') {
-      const parsedScope = stringToScope(scope, callbacks.add, run);
+      const parsedScope = superjson.parse(scope);
 
       try {
         const result = await scopedEval(parsedScope, code);
 
-        port.postMessage(['return', { id, args: argsToString([result], callbacks.add, run) }]);
+        port.postMessage(['return', { id, args: superjson.stringify([result]) }]);
       } catch (error) {
         try {
           const stack = getStack(error, -1);
-          port.postMessage(['error', { id: errorId, args: argsToString([stack || error.message], callbacks.add, run) }]);
+          port.postMessage(['error', { id: errorId, args: superjson.stringify([stack || error.message]) }]);
         } catch (error2) {
-          port.postMessage(['error', { id: errorId, args: argsToString([error.message], callbacks.add, run) }]);
+          port.postMessage(['error', { id: errorId, args: superjson.stringify([error.message]) }]);
         }
       }
     }
 
     if (action === 'callback') {
-      const parsedArgs = stringToArgs(args, callbacks.add, run);
+      const parsedArgs = superjson.parse(args);
 
       const fn = callbacks.get(id);
       if (!fn) {
@@ -66,10 +65,10 @@ self.addEventListener('message', async (event) => {
       }
       try {
         const result = await fn(...parsedArgs);
-        port.postMessage(['return', { id: resolve, args: argsToString([result], callbacks.add, run) }]);
+        port.postMessage(['return', { id: resolve, args: superjson.stringify([result]) }]);
       } catch (error) {
         const stack = getStack(error);
-        port.postMessage(['error', { id: reject, args: argsToString([stack || error.message], callbacks.add, run) }]);
+        port.postMessage(['error', { id: reject, args: superjson.stringify([stack || error.message]) }]);
       }
     }
   };
