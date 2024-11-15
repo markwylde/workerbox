@@ -124,7 +124,7 @@ An iframe is inserted into the page (optionally from a completely separate domai
 
 The iframe then creates a web worker, and handles posting messages between the iframe, webworker and your own app.
 
-Because the only communication between the user code and the workerbox is done through messaging, the argument inputs and outputs must all be JSON serializable.
+Because the only communication between the user code and the workerbox is done through messaging, the argument inputs and outputs must all be serializable. We use [SuperJSON](https://github.com/flightcontrolhq/superjson) for serialization and deserialization.
 
 ### Separate domain
 While the iframe has the `sandbox="allow-scripts"` attribute set, and therefore acts like it's on another domain, you can still run the server on another domain if you wish.
