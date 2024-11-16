@@ -1,9 +1,15 @@
 declare type WorkerBoxOptions = {
+  scriptUrl?: string,
   appendVersion?: boolean;
 };
+
 declare type Scope = object;
-declare function createWorkerBox(scriptUrl: any, options?: WorkerBoxOptions): Promise<{
+
+export type WorkerBox = {
   run: (code: string, scope?: Scope) => Promise<any>;
-  destroy: () => any;
-}>
+  destroy: () => void;
+};
+
+declare function createWorkerBox(options?: WorkerBoxOptions): Promise<WorkerBox>;
+
 export default createWorkerBox;

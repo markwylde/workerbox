@@ -33,6 +33,9 @@
     "url": "https://github.com/markwylde/workerbox/issues"
   },
   "homepage": "https://github.com/markwylde/workerbox#readme",
+  "dependencies": {
+    "superjson": "^2.2.1"
+  },
   "devDependencies": {
     "@markwylde/ftp-deploy": "^2.0.3",
     "chokidar": "^4.0.1",
