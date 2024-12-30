@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/markwylde/workerbox#readme",
   "dependencies": {
-    "superjson": "^2.2.1"
+    "superjson": "^2.2.2"
   },
   "devDependencies": {
     "@markwylde/ftp-deploy": "^2.0.3",
