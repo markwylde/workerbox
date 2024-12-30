@@ -8,7 +8,7 @@ async function run (code) {
     headless: 'new',
     defaultViewport: null,
     devtools: true,
-    args: ['--ignore-certificate-errors']
+    args: ['--ignore-certificate-errors', '--no-sandbox', '--disable-setuid-sandbox']
   });
 
   const cleanup = debounce(() => {
