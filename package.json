@@ -1,6 +1,6 @@
 {
   "name": "workerboxjs",
-  "version": "6.4.3",
+  "version": "6.4.4",
   "type": "module",
   "description": "A secure sandbox to execute untrusted user JavaScript, in a web browser, without any risk to your own domain/site/page.",
   "main": "lib/index.js",
