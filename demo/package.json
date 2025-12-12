@@ -26,11 +26,11 @@
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/state": "^6.5.2",
     "codemirror": "^6.0.2",
-    "debounce": "^2.2.0",
+    "debounce": "^3.0.0",
     "workerboxjs": "file:../"
   },
   "devDependencies": {
-    "esbuild": "^0.25.8",
+    "esbuild": "^0.27.1",
     "servatron": "^2.9.0"
   }
 }
